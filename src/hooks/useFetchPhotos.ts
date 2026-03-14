@@ -24,8 +24,10 @@ export function useFetchPhoto(): UseFetchPhotosresult {
                 if ((err as Error).name !== "AbortError") {
                     setError("Could not load photos. Please try again.");
                 }
-            }finally{
-                setLoading(false);
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             }
         }
 

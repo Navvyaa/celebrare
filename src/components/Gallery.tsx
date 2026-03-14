@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useFetchPhoto } from "../hooks/useFetchPhotos";
 import type { Photo } from "../types/photoType";
 import { SearchBar } from "./SearchBar";
-import heart from "../assets/heart.svg"
-import heartFill from "../assets/heart-fill.svg"
+import { PhotoCard } from "./PhotoCard";
+import heart from "../assets/heart.svg";
+import heartFill from "../assets/heart-fill.svg";
+
 type FavoritesAction =
     | { type: "toggle"; payload: string };
 
@@ -33,7 +35,7 @@ function loadFavorites(): string[] {
 export function Gallery() {
     const { photos, loading, error } = useFetchPhoto();
     const [search, setSearch] = useState("");
-
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [favorites, dispatch] = useReducer(favoritesReducer, [], loadFavorites);
 
     useEffect(() => {
@@ -48,17 +50,48 @@ export function Gallery() {
 
     const filteredPhotos = useMemo(() => {
         const term = search.trim().toLowerCase();
-        if (!term) return photos;
-        return photos.filter((photo: Photo) => photo.author.toLowerCase().includes(term));
-    }, [photos, search]);
+        const visiblePhotos = showFavoritesOnly
+            ? photos.filter((photo: Photo) => favoriteSet.has(photo.id))
+            : photos;
+
+        if (!term) return visiblePhotos;
+
+        return visiblePhotos.filter((photo: Photo) =>
+            photo.author.toLowerCase().startsWith(term)
+        );
+    }, [favoriteSet, photos, search, showFavoritesOnly]);
+
+    const onFavouriteClick = (photo: Photo) => {
+        dispatch({ type: "toggle", payload: photo.id });
+    };
 
     return (
         <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-8">
-            <div className="flex items-center justify-between mb-5">
-                <h1 className="mb-6 text-3xl font-bold tracking-tight">Picsum Gallery</h1>
-                <SearchBar value={search} onChange={onSearchChange} />
-            </div>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-5">
+                <h1 className="mb-6 text-3xl font-bold tracking-tight">
+                    Picsum Gallery
+                </h1>
 
+                <div className="flex w-full max-w-xl items-start gap-3 md:w-auto">
+                    <SearchBar value={search} onChange={onSearchChange} />
+                    <button
+                        type="button"
+                        onClick={() => setShowFavoritesOnly((current) => !current)}
+                        className={`flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl border transition ${showFavoritesOnly
+                            ? "border-rose-300 bg-rose-50"
+                            : "border-slate-300 bg-white hover:bg-slate-50"
+                            }`}
+                        aria-label={showFavoritesOnly ? "Show all pictures" : "Show favourite pictures"}
+                        aria-pressed={showFavoritesOnly}
+                    >
+                        <img
+                            src={showFavoritesOnly ? heartFill : heart}
+                            alt=""
+                            className="h-6 w-6"
+                        />
+                    </button>
+                </div>
+            </div>
 
             {loading && (
                 <div className="flex items-center justify-center gap-3 py-16">
@@ -67,7 +100,7 @@ export function Gallery() {
                 </div>
             )}
 
-            {error && (
+            {!loading && error && (
                 <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-700">
                     {error}
                 </div>
@@ -76,38 +109,23 @@ export function Gallery() {
             {!loading && !error && (
                 <>
                     {filteredPhotos.length === 0 ? (
-                        <p className="py-10 text-center text-slate-500">No authors matched your search.</p>
+                        <p className="py-10 text-center text-slate-500">
+                            {showFavoritesOnly
+                                ? "No favourite pictures matched your search."
+                                : "No authors matched your search."}
+                        </p>
                     ) : (
                         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                             {filteredPhotos.map((photo) => {
                                 const isFavorite = favoriteSet.has(photo.id);
 
                                 return (
-                                    <div
+                                    <PhotoCard
                                         key={photo.id}
-                                        className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-300 hover:shadow-xl"
-                                    >
-                                        <img
-                                            src={photo.download_url}
-                                            alt={photo.author}
-                                            className="h-56 w-full object-cover"
-                                            loading="lazy"
-                                        />
-                                        <div className="flex items-center justify-between p-3">
-                                            <p className="truncate text-sm font-semibold text-slate-700">{photo.author}</p>
-                                            <button
-                                                type="button"
-                                                onClick={() => dispatch({ type: "toggle", payload: photo.id })}
-                                                className={`rounded-full p-2 transition ${isFavorite
-                                                    ? "bg-rose-100 text-rose-600"
-                                                    : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                                                    }`}
-                                                aria-label={isFavorite ? "Remove from favourites" : "Add to favourites"}
-                                            >
-                                                <img src={isFavorite? heartFill:heart} alt="" />
-                                            </button>
-                                        </div>
-                                    </div>
+                                        photo={photo}
+                                        isFavorite={isFavorite}
+                                        onFavouriteClick={onFavouriteClick}
+                                    />
                                 );
                             })}
                         </section>
