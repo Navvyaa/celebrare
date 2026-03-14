@@ -5,7 +5,7 @@ import { SearchBar } from "./SearchBar";
 import { PhotoCard } from "./PhotoCard";
 import heart from "../assets/heart.svg";
 import heartFill from "../assets/heart-fill.svg";
-
+import gicon from "../assets/gallery1.png"
 type FavoritesAction =
     | { type: "toggle"; payload: string };
 
@@ -68,9 +68,12 @@ export function Gallery() {
     return (
         <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between mb-5">
-                <h1 className="mb-6 text-3xl font-bold tracking-tight">
-                    Picsum Gallery
-                </h1>
+                <div className="flex items-center gap-4 mb-6 ">
+                    <img src={gicon} alt="" className="w-8 h-8 "/>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Picsum Gallery
+                    </h1>
+                </div>
 
                 <div className="flex w-full max-w-xl items-start gap-3 md:w-auto">
                     <SearchBar value={search} onChange={onSearchChange} />
@@ -79,7 +82,7 @@ export function Gallery() {
                         onClick={() => setShowFavoritesOnly((current) => !current)}
                         className={`flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl border transition ${showFavoritesOnly
                             ? "border-rose-300 bg-rose-50"
-                            : "border-slate-300 bg-white hover:bg-slate-50"
+                            : "border-slate-300 bg-slate-100 hover:bg-slate-50"
                             }`}
                         aria-label={showFavoritesOnly ? "Show all pictures" : "Show favourite pictures"}
                         aria-pressed={showFavoritesOnly}

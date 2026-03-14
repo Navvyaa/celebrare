@@ -8,7 +8,7 @@ type SearchBarProps = {
 
 export function SearchBar({ value, onChange }: SearchBarProps) {
     return (
-        <div className="relative mb-6 w-full max-w-md rounded-2xl border border-slate-400 px-4">
+        <div className="relative mb-6 w-full max-w-md rounded-2xl border border-slate-300 px-4">
             <span className="pointer-events-none absolute rounded-xl inset-y-0 left-4 flex items-center">
                 <img src={searchGlass} alt="" />
             </span>
