@@ -1,11 +1,10 @@
-import './App.css'
-
+import { Gallery } from './components/Gallery';
 function App() {
 
   return (
-   <div className='text-blue-500'>
-    Helloo
-   </div>
+    <div className='w-dvw h-dvh bg-slate-300  mx-auto p-1'>
+      <Gallery />
+    </div>
   )
 }
 

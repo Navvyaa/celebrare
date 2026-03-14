@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+*{
+  color: black;
+  background-color: oklch(92.9% 0.013 255.508);
+}
