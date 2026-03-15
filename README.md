@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# Picsum Gallery
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive photo gallery built with React, TypeScript, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+The app fetches photos from Picsum, supports author search, allows users to mark favourites, and persists favourites in localStorage.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Fetches photos from the Picsum API
+- Search photos by author name
+- Add or remove favourites from each photo card
+- Toggle between all photos and favourites only
+- Persists favourites in localStorage
+- Image skeleton placeholders while each image loads
+- Loading and error states for API requests
+- Responsive grid layout with hover card scale effect
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS 4
+- ESLint
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 18+
+- npm
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Install dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Start development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Build for production
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```text
+src/
+	assets/                    Static icons and images
+	components/
+		Gallery.tsx              Main gallery container and UI controls
+		PhotoCard.tsx            Individual photo card with skeleton loading
+		SearchBar.tsx            Search input component
+	hooks/
+		useFetchPhotos.ts        Data fetching hook for Picsum photos
+	reducers/
+		favoritesReducer.ts      Reducer for favourite toggle state updates
+	utils/
+		favoritesStorage.ts      localStorage load/save helpers
+	types/
+		photoType.ts             Shared photo and hook result types
+```
+
+## Application Flow
+
+1. `useFetchPhoto` fetches photos from `https://picsum.photos/v2/list?limit=30`.
+2. `Gallery` manages search text, favourites filter mode, and favourites state.
+3. Favourites state is handled with `favoritesReducer`.
+4. Favourites are loaded from and saved to localStorage through `favoritesStorage`.
+5. `PhotoCard` renders each image, heart button, and per-image skeleton while loading.
+
+## Favourites Persistence
+
+- localStorage key: `favourite_photo_ids`
+- Value format: JSON array of photo ID strings
+
+## Notes
+
+- Search currently uses prefix matching (`startsWith`) on author names.
+- Favourites are browser-local and not synced to any backend.
+
+## Future Improvements
+
+- Add pagination or infinite scroll
+- Add image detail modal
+- Add unit tests for reducer and storage helpers
+- Add component tests for search and favourites filter flow

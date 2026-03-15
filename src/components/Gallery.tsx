@@ -1,36 +1,13 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useFetchPhoto } from "../hooks/useFetchPhotos";
 import type { Photo } from "../types/photoType";
+import { favoritesReducer } from "../reducers/favoritesReducer";
+import { loadFavorites, saveFavorites } from "../utils/favoritesStorage";
 import { SearchBar } from "./SearchBar";
 import { PhotoCard } from "./PhotoCard";
 import heart from "../assets/heart.svg";
 import heartFill from "../assets/heart-fill.svg";
 import gicon from "../assets/gallery1.png"
-type FavoritesAction =
-    | { type: "toggle"; payload: string };
-
-const FAVORITES_KEY = "favourite_photo_ids";
-
-function favoritesReducer(state: string[], action: FavoritesAction): string[] {
-    if (action.type === "toggle") {
-        return state.includes(action.payload)
-            ? state.filter((id) => id !== action.payload)
-            : [...state, action.payload];
-    }
-    return state;
-}
-
-function loadFavorites(): string[] {
-    try {
-        const raw = localStorage.getItem(FAVORITES_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw) as unknown;
-        if (!Array.isArray(parsed)) return [];
-        return parsed.filter((id): id is string => typeof id === "string");
-    } catch {
-        return [];
-    }
-}
 
 export function Gallery() {
     const { photos, loading, error } = useFetchPhoto();
@@ -39,7 +16,7 @@ export function Gallery() {
     const [favorites, dispatch] = useReducer(favoritesReducer, [], loadFavorites);
 
     useEffect(() => {
-        localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+        saveFavorites(favorites);
     }, [favorites]);
 
     const favoriteSet = useMemo(() => new Set(favorites), [favorites]);
@@ -69,7 +46,7 @@ export function Gallery() {
         <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between mb-5">
                 <div className="flex items-center gap-4 mb-6 ">
-                    <img src={gicon} alt="" className="w-8 h-8 "/>
+                    <img src={gicon} alt="" className="w-8 h-8 " />
                     <h1 className="text-3xl font-bold tracking-tight">
                         Picsum Gallery
                     </h1>
