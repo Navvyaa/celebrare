@@ -6,13 +6,13 @@ import heartFill from "../assets/heart-fill.svg";
 type PhotoCardProps = {
     photo: Photo;
     isFavorite: boolean;
-    onFavouriteClick: (photo: Photo) => void;
+    onFavoriteClick: (photo: Photo) => void;
 };
 
 export const PhotoCard = React.memo(function PhotoCard({
     photo,
     isFavorite,
-    onFavouriteClick,
+    onFavoriteClick,
 }: PhotoCardProps) {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -24,7 +24,7 @@ export const PhotoCard = React.memo(function PhotoCard({
         <div className="relative overflow-hidden rounded-lg bg-slate-50 shadow-sm ring-1 ring-slate-300 transition-transform duration-300 ease-out hover:z-10 lg:hover:scale-110 hover:scale-105 hover:shadow-xl">
             {!isImageLoaded && (
                 <div
-                    className="h-56 w-full animate-pulse bg-slate-200"
+                    className=" w-full animate-pulse bg-slate-200"
                     aria-hidden="true"
                 />
             )}
@@ -45,7 +45,7 @@ export const PhotoCard = React.memo(function PhotoCard({
 
                 <button
                     type="button"
-                    onClick={() => onFavouriteClick(photo)}
+                    onClick={() => onFavoriteClick(photo)}
                     className="flex items-center justify-center w-9 h-9 rounded-full  hover:bg-slate-100"
                 >
                     <div className="relative w-6 h-6">

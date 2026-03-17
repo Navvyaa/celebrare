@@ -38,7 +38,7 @@ export function Gallery() {
         );
     }, [favoriteSet, photos, search, showFavoritesOnly]);
 
-    const onFavouriteClick = (photo: Photo) => {
+    const onFavoriteClick = (photo: Photo) => {
         dispatch({ type: "toggle", payload: photo.id });
     };
 
@@ -104,7 +104,7 @@ export function Gallery() {
                                         key={photo.id}
                                         photo={photo}
                                         isFavorite={isFavorite}
-                                        onFavouriteClick={onFavouriteClick}
+                                        onFavoriteClick={onFavoriteClick}
                                     />
                                 );
                             })}
